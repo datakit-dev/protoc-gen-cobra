@@ -1,13 +1,103 @@
 package client
 
 import (
+	"strings"
 	"time"
 
 	"github.com/NathanBaulch/protoc-gen-cobra/iocodec"
 	"github.com/NathanBaulch/protoc-gen-cobra/naming"
+	"github.com/spf13/pflag"
 )
 
 type Option func(*Config)
+
+func WithServerAddrFlag() Option {
+	return func(c *Config) {
+		c.flagBinders = append(c.flagBinders, func(fs *pflag.FlagSet, n naming.Namer) {
+			fs.StringVarP(&c.ServerAddr, n("ServerAddr"), "s", c.ServerAddr, "server address in the form host:port")
+		})
+	}
+}
+
+func WithRequestFileFlag() Option {
+	return func(c *Config) {
+		c.flagBinders = append(c.flagBinders, func(fs *pflag.FlagSet, n naming.Namer) {
+			fs.StringVarP(&c.RequestFile, n("RequestFile"), "f", c.RequestFile, "client request file; use \"-\" for stdin")
+		})
+	}
+}
+
+func WithRequestFormatFlag() Option {
+	return func(c *Config) {
+		c.flagBinders = append(c.flagBinders, func(fs *pflag.FlagSet, n naming.Namer) {
+			fs.StringVarP(&c.RequestFormat, n("RequestFormat"), "i", c.RequestFormat, "request format ("+strings.Join(c.decoderFormats(), ", ")+")")
+		})
+	}
+}
+
+func WithResponseFormatFlag() Option {
+	return func(c *Config) {
+		c.flagBinders = append(c.flagBinders, func(fs *pflag.FlagSet, n naming.Namer) {
+			fs.StringVarP(&c.ResponseFormat, n("ResponseFormat"), "o", c.ResponseFormat, "response format ("+strings.Join(c.encoderFormats(), ", ")+")")
+		})
+	}
+}
+
+func WithTimeoutFlag() Option {
+	return func(c *Config) {
+		c.flagBinders = append(c.flagBinders, func(fs *pflag.FlagSet, n naming.Namer) {
+			fs.DurationVar(&c.Timeout, n("Timeout"), c.Timeout, "RPC timeout")
+		})
+	}
+}
+
+func WithTLSFlag() Option {
+	return func(c *Config) {
+		c.flagBinders = append(c.flagBinders, func(fs *pflag.FlagSet, n naming.Namer) {
+			fs.BoolVar(&c.TLS, n("TLS"), c.TLS, "enable TLS")
+		})
+	}
+}
+
+func WithServerNameFlag() Option {
+	return func(c *Config) {
+		c.flagBinders = append(c.flagBinders, func(fs *pflag.FlagSet, n naming.Namer) {
+			fs.StringVar(&c.ServerName, n("TLS ServerName"), c.ServerName, "TLS server name override")
+		})
+	}
+}
+
+func WithInsecureSkipVerifyFlag() Option {
+	return func(c *Config) {
+		c.flagBinders = append(c.flagBinders, func(fs *pflag.FlagSet, n naming.Namer) {
+			fs.BoolVar(&c.InsecureSkipVerify, n("TLS InsecureSkipVerify"), c.InsecureSkipVerify, "INSECURE: skip TLS checks")
+		})
+	}
+}
+
+func WithCACertFileFlag() Option {
+	return func(c *Config) {
+		c.flagBinders = append(c.flagBinders, func(fs *pflag.FlagSet, n naming.Namer) {
+			fs.StringVar(&c.CACertFile, n("TLS CACertFile"), c.CACertFile, "CA certificate file")
+		})
+	}
+}
+
+func WithCertFileFlag() Option {
+	return func(c *Config) {
+		c.flagBinders = append(c.flagBinders, func(fs *pflag.FlagSet, n naming.Namer) {
+			fs.StringVar(&c.CertFile, n("TLS CertFile"), c.CertFile, "client certificate file")
+		})
+	}
+}
+
+func WithKeyFileFlag() Option {
+	return func(c *Config) {
+		c.flagBinders = append(c.flagBinders, func(fs *pflag.FlagSet, n naming.Namer) {
+			fs.StringVar(&c.KeyFile, n("TLS KeyFile"), c.KeyFile, "client key file")
+		})
+	}
+}
 
 func WithServerAddr(addr string) Option {
 	return func(c *Config) {

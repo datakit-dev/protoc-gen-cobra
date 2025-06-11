@@ -7,7 +7,6 @@ import (
 
 	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 type stringValue string
@@ -17,9 +16,9 @@ func (*stringValue) Type() string           { return "string" }
 func (s *stringValue) String() string       { return string(*s) }
 
 func TestSetFlagsFromEnv(t *testing.T) {
-	require.NoError(t, os.Setenv("FOO", "a"))
-	require.NoError(t, os.Setenv("L1_FOO", "b"))
-	require.NoError(t, os.Setenv("L1_L2_FOO", "c"))
+	assert.NoError(t, os.Setenv("FOO", "a"))
+	assert.NoError(t, os.Setenv("L1_FOO", "b"))
+	assert.NoError(t, os.Setenv("L1_L2_FOO", "c"))
 
 	testCases := []struct {
 		path   string

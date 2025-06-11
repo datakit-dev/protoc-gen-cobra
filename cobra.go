@@ -54,6 +54,9 @@ func {{.GoName}}ClientCommand(options ...client.Option) *cobra.Command {
 	serviceImports = []protogen.GoImportPath{
 		"github.com/NathanBaulch/protoc-gen-cobra/client",
 		"github.com/spf13/cobra",
+		"errors",
+		"context",
+		"fmt",
 	}
 )
 
@@ -85,6 +88,14 @@ func _{{.Parent.GoName}}{{.GoName}}Command(cfg *client.Config) *cobra.Command {
 		Long: {{.Comments.Leading | cleanComments | printf "%q"}},{{if .Desc.Options.GetDeprecated}}
 		Deprecated: "deprecated",{{end}}
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if cfg.GetContextFunc != nil {
+				ctx, err := cfg.GetContextFunc(cmd.Context())
+				if err != nil {
+					return err
+				}
+				cmd.SetContext(ctx)
+			}
+
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "{{.Parent.GoName}}"); err != nil {
 					return err
@@ -93,7 +104,14 @@ func _{{.Parent.GoName}}{{.GoName}}Command(cfg *client.Config) *cobra.Command {
 					return err
 				}
 			}
-			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
+
+			if cfg.Timeout > 0 {
+				ctx, done := context.WithTimeout(cmd.Context(), cfg.Timeout)
+				defer done()
+				cmd.SetContext(ctx)
+			}
+
+			err := client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
 				cli := New{{.Parent.GoName}}Client(cc)
 				v := &{{.Input.GoIdent.GoName}}{}
 	{{if .Desc.IsStreamingClient}}
@@ -152,6 +170,15 @@ func _{{.Parent.GoName}}{{.GoName}}Command(cfg *client.Config) *cobra.Command {
 				return out(res)
 	{{end}}
 			})
+
+			if err != nil {
+				if errors.Is(err, context.DeadlineExceeded) {
+					return fmt.Errorf("request timeout: %w", err)
+				}
+				return err
+			}
+
+			return nil
 		},
 	}
 
