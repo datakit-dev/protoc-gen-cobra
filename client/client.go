@@ -29,6 +29,7 @@ type (
 type Config struct {
 	GetContextFunc func(context.Context) (context.Context, error)
 	ClientConnFunc func() (*grpc.ClientConn, error)
+	PreDecoder     func(context.Context) func(any) error
 	ServerAddr     string
 	RequestFile    string
 	RequestFormat  string
@@ -64,14 +65,14 @@ var DefaultConfig = &Config{
 	EnvVarNamer:  naming.UpperSnake,
 
 	inDecoders: map[string]iocodec.DecoderMaker{
-		"json": iocodec.JSONDecoderMaker(),
-		"xml":  iocodec.XMLDecoderMaker(),
+		// "json": iocodec.JSONDecoderMaker(),
+		// "xml":  iocodec.XMLDecoderMaker(),
 	},
 	outEncoders: map[string]iocodec.EncoderMaker{
-		"json":       iocodec.JSONEncoderMaker(false),
-		"prettyjson": iocodec.JSONEncoderMaker(true),
-		"xml":        iocodec.XMLEncoderMaker(false),
-		"prettyxml":  iocodec.XMLEncoderMaker(true),
+		// "json":       iocodec.JSONEncoderMaker(false),
+		// "prettyjson": iocodec.JSONEncoderMaker(true),
+		// "xml":        iocodec.XMLEncoderMaker(false),
+		// "prettyxml":  iocodec.XMLEncoderMaker(true),
 	},
 }
 
@@ -139,9 +140,12 @@ func (c *Config) encoderFormats() []string {
 func RoundTrip(ctx context.Context, cfg *Config, fn func(grpc.ClientConnInterface, iocodec.Decoder, iocodec.Encoder) error) error {
 	var err error
 	var in iocodec.Decoder
-	if in, err = cfg.makeDecoder(); err != nil {
+	if cfg.RequestFile == "" && cfg.PreDecoder != nil {
+		in = cfg.PreDecoder(ctx)
+	} else if in, err = cfg.makeDecoder(); err != nil {
 		return err
 	}
+
 	var out iocodec.Encoder
 	if out, err = cfg.makeEncoder(); err != nil {
 		return err
