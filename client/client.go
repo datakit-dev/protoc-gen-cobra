@@ -66,13 +66,13 @@ var DefaultConfig = &Config{
 
 	inDecoders: map[string]iocodec.DecoderMaker{
 		// "json": iocodec.JSONDecoderMaker(),
-		// "xml":  iocodec.XMLDecoderMaker(),
+		"xml": iocodec.XMLDecoderMaker(),
 	},
 	outEncoders: map[string]iocodec.EncoderMaker{
 		// "json":       iocodec.JSONEncoderMaker(false),
-		// "prettyjson": iocodec.JSONEncoderMaker(true),
-		// "xml":        iocodec.XMLEncoderMaker(false),
-		// "prettyxml":  iocodec.XMLEncoderMaker(true),
+		"prettyjson": iocodec.JSONEncoderMaker(true),
+		"xml":        iocodec.XMLEncoderMaker(false),
+		"prettyxml":  iocodec.XMLEncoderMaker(true),
 	},
 }
 

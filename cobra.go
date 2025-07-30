@@ -337,8 +337,8 @@ func flagFormat(g *protogen.GeneratedFile, fld *protogen.Field) string {
 	case protoreflect.EnumKind:
 		if fld.Desc.IsList() {
 			return "flag.EnumSliceVar(cmd.PersistentFlags(), %s, %s, %q)"
-		} else if fld.Desc.HasPresence() {
-			return "flag.EnumPointerVar(cmd.PersistentFlags(), %s, %s, %q)"
+			// } else if fld.Desc.HasPresence() {
+			// 	return "flag.EnumPointerVar(cmd.PersistentFlags(), %s, %s, %q)"
 		} else {
 			return "flag.EnumVar(cmd.PersistentFlags(), %s, %s, %q)"
 		}

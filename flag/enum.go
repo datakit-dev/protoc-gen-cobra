@@ -27,7 +27,7 @@ func EnumPointerVar[T protoreflect.Enum](fs *pflag.FlagSet, p **T, name, usage s
 }
 
 func EnumSliceVar[T protoreflect.Enum](fs *pflag.FlagSet, p *[]T, name, usage string) {
-	SliceVar[T](fs, ParseEnumE[T], p, name, usage)
+	SliceVar(fs, ParseEnumE[T], p, name, usage)
 }
 
 func ParseEnumE[T protoreflect.Enum](val string) (T, error) {

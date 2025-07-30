@@ -12,7 +12,7 @@ import (
 func TestEnumVar(t *testing.T) {
 	fs := &pflag.FlagSet{}
 	var p Enum
-	EnumVar[Enum](fs, &p, "foo", "")
+	EnumVar(fs, &p, "foo", "")
 	assert.NoError(t, fs.Set("foo", "TUE"))
 	assert.Equal(t, Enum_TUE, p)
 	assert.NoError(t, fs.Set("foo", "wed"))
@@ -24,7 +24,7 @@ func TestEnumVar(t *testing.T) {
 func TestEnumPointerVar(t *testing.T) {
 	fs := &pflag.FlagSet{}
 	var p *Enum
-	EnumPointerVar[Enum](fs, &p, "foo", "")
+	EnumPointerVar(fs, &p, "foo", "")
 	assert.NoError(t, fs.Set("foo", "TUE"))
 	want := Enum_TUE
 	assert.Equal(t, &want, p)
@@ -38,7 +38,7 @@ func TestEnumPointerVar(t *testing.T) {
 func TestEnumSliceVar(t *testing.T) {
 	fs := &pflag.FlagSet{}
 	var p []Enum
-	EnumSliceVar[Enum](fs, &p, "foo", "")
+	EnumSliceVar(fs, &p, "foo", "")
 	assert.NoError(t, fs.Set("foo", "MON,1"))
 	assert.Equal(t, []Enum{Enum_MON, Enum_TUE}, p)
 	assert.NoError(t, fs.Set("foo", "WED"))
