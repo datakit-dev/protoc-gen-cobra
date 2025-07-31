@@ -5,8 +5,8 @@ package yaml
 
 // 	"gopkg.in/yaml.v3"
 
-// 	"github.com/NathanBaulch/protoc-gen-cobra/client"
-// 	"github.com/NathanBaulch/protoc-gen-cobra/iocodec"
+// 	"github.com/datakit-dev/protoc-gen-cobra/client"
+// 	"github.com/datakit-dev/protoc-gen-cobra/iocodec"
 // )
 
 // func init() {

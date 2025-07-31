@@ -6,7 +6,7 @@ import (
 	"io"
 	"reflect"
 
-	"github.com/NathanBaulch/protoc-gen-cobra/ptypes"
+	"github.com/datakit-dev/protoc-gen-cobra/ptypes"
 	"github.com/mitchellh/mapstructure"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
