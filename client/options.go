@@ -4,8 +4,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/NathanBaulch/protoc-gen-cobra/iocodec"
-	"github.com/NathanBaulch/protoc-gen-cobra/naming"
+	"github.com/datakit-dev/protoc-gen-cobra/iocodec"
+	"github.com/datakit-dev/protoc-gen-cobra/naming"
 	"github.com/spf13/pflag"
 )
 

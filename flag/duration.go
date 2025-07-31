@@ -4,7 +4,7 @@ import (
 	"github.com/spf13/pflag"
 	"google.golang.org/protobuf/types/known/durationpb"
 
-	"github.com/NathanBaulch/protoc-gen-cobra/ptypes"
+	"github.com/datakit-dev/protoc-gen-cobra/ptypes"
 )
 
 func DurationVar(fs *pflag.FlagSet, p **durationpb.Duration, name, usage string) {

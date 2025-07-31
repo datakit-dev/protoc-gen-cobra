@@ -3,13 +3,14 @@
 package pb
 
 import (
-	client "github.com/NathanBaulch/protoc-gen-cobra/client"
-	flag "github.com/NathanBaulch/protoc-gen-cobra/flag"
-	iocodec "github.com/NathanBaulch/protoc-gen-cobra/iocodec"
+	io "io"
+
+	client "github.com/datakit-dev/protoc-gen-cobra/client"
+	flag "github.com/datakit-dev/protoc-gen-cobra/flag"
+	iocodec "github.com/datakit-dev/protoc-gen-cobra/iocodec"
 	cobra "github.com/spf13/cobra"
 	grpc "google.golang.org/grpc"
 	proto "google.golang.org/protobuf/proto"
-	io "io"
 )
 
 func CacheClientCommand(options ...client.Option) *cobra.Command {

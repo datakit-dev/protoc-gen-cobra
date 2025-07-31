@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package common;
 
-option go_package = "github.com/NathanBaulch/protoc-gen-cobra/testdata/oneof/common";
+option go_package = "github.com/datakit-dev/protoc-gen-cobra/testdata/oneof/common";
 
 message PaginationRequest{
     int32 page_size = 1;

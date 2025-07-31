@@ -7,11 +7,12 @@
 package oneof
 
 import (
-	common "github.com/NathanBaulch/protoc-gen-cobra/testdata/oneof/common"
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
+
+	common "github.com/datakit-dev/protoc-gen-cobra/testdata/oneof/common"
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
