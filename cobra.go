@@ -88,14 +88,6 @@ func _{{.Parent.GoName}}{{.GoName}}Command(cfg *client.Config) *cobra.Command {
 		Long: {{.Comments.Leading | cleanComments | printf "%q"}},{{if .Desc.Options.GetDeprecated}}
 		Deprecated: "deprecated",{{end}}
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if cfg.GetContextFunc != nil {
-				ctx, err := cfg.GetContextFunc(cmd.Context())
-				if err != nil {
-					return err
-				}
-				cmd.SetContext(ctx)
-			}
-
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "{{.Parent.GoName}}"); err != nil {
 					return err
@@ -128,6 +120,13 @@ func _{{.Parent.GoName}}{{.GoName}}Command(cfg *client.Config) *cobra.Command {
 						return err
 					}
 					proto.Merge(v, req)
+
+					if cfg.PreCaller != nil {
+						if err := cfg.PreCaller(v); err != nil {
+							return err
+						}
+					}
+
 					if err = stm.Send(v); err != nil {
 						return err
 					}
@@ -137,6 +136,12 @@ func _{{.Parent.GoName}}{{.GoName}}Command(cfg *client.Config) *cobra.Command {
 					return err
 				}
 				proto.Merge(v, req)
+
+				if cfg.PreCaller != nil {
+					if err := cfg.PreCaller(v); err != nil {
+						return err
+					}
+				}
 		{{if .Desc.IsStreamingServer}}
 				stm, err := cli.{{.GoName}}(cmd.Context(), v)
 		{{else}}

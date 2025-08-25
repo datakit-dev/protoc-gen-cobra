@@ -22,14 +22,15 @@ import (
 )
 
 type (
-	FlagBinder func(*pflag.FlagSet, naming.Namer)
-	PreDialer  func(context.Context, *[]grpc.DialOption) error
+	FlagBinder    func(*pflag.FlagSet, naming.Namer)
+	GetClientFunc func() *grpc.ClientConn
+	PreCaller     func(any) error
+	PreDialer     func(context.Context, *[]grpc.DialOption) error
 )
 
 type Config struct {
-	GetContextFunc func(context.Context) (context.Context, error)
-	ClientConnFunc func() (*grpc.ClientConn, error)
-	PreDecoder     func(context.Context) func(any) error
+	ClientConnFunc GetClientFunc
+	PreCaller      PreCaller
 	ServerAddr     string
 	RequestFile    string
 	RequestFormat  string
@@ -140,9 +141,7 @@ func (c *Config) encoderFormats() []string {
 func RoundTrip(ctx context.Context, cfg *Config, fn func(grpc.ClientConnInterface, iocodec.Decoder, iocodec.Encoder) error) error {
 	var err error
 	var in iocodec.Decoder
-	if cfg.RequestFile == "" && cfg.PreDecoder != nil {
-		in = cfg.PreDecoder(ctx)
-	} else if in, err = cfg.makeDecoder(); err != nil {
+	if in, err = cfg.makeDecoder(); err != nil {
 		return err
 	}
 
@@ -153,10 +152,7 @@ func RoundTrip(ctx context.Context, cfg *Config, fn func(grpc.ClientConnInterfac
 
 	var cc *grpc.ClientConn
 	if cfg.ClientConnFunc != nil {
-		cc, err = cfg.ClientConnFunc()
-		if err != nil {
-			return err
-		}
+		cc = cfg.ClientConnFunc()
 	} else {
 		opts := []grpc.DialOption{}
 		if err := cfg.dialOpts(ctx, &opts); err != nil {
